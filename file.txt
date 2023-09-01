@@ -33,7 +33,7 @@ cd /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web
 
 sudo chmod 777 /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/ -R
 
-sudo lftp -e  "mirror --overwrite -R /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web .;quit" -u myhuddl>
+sudo lftp -e  "mirror --overwrite -R /home/jenkins/BUILD/myhuddleapi/myhuddleapi/build-web .;quit" -u myhuddledev_api,lapd934@# 51.81.104.222
 #sshpass -p 'J5Yw3aUBX40v7RHX' scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=yes -r /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web* oesadmin@66.70.170.125:C:\\inetpub\\wwwroot\\myhuddledevapittest.essentialdemo.com
 
 sshpass -p 'J5Yw3aUBX40v7RHX' ssh oesadmin@66.70.170.125 C:\\Windows\\SysWOW64\\inetsrv\\appcmd.exe start apppool /apppool.name:"myhuddledevapitest.essentialdemo.com"
