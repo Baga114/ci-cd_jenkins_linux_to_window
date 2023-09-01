@@ -1,0 +1,42 @@
+#!/bin/bash
+cd /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com
+sudo git stash
+sudo GIT_SSH_COMMAND='ssh -i /home/jenkins/BUILD/.ssh/myhuddleuatapi' git pull origin Dev 
+sudo chmod 777 -R /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com
+sudo rm -rf /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/*
+export PATH=$PATH:$HOME/.dotnet
+
+sudo dotnet restore --source https://nugetorion.azurewebsites.net/nuget
+sudo dotnet publish MyHuddle.sln --configuration Release --output /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web
+
+
+sudo rm -rf /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/web.config
+sudo rm -rf /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/app.config
+sudo rm -rf /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/appsettings.Production.json
+sudo rm -rf /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/appsettings.Staging.json
+
+sshpass -p 'J5Yw3aUBX40v7RHX' ssh oesadmin@66.70.170.125 C:\\Windows\\SysWOW64\\inetsrv\\appcmd.exe stop site /site.name:"myhuddledevapitest.essentialdemo.com"
+sshpass -p 'J5Yw3aUBX40v7RHX' ssh oesadmin@66.70.170.125 C:\\Windows\\SysWOW64\\inetsrv\\appcmd.exe stop apppool /apppool.name:"myhuddledevapitest.essentialdemo.com"
+
+HOST='66.70.170.125'
+USER='myhuddlenew'
+PASSWD='nypd934@#'
+
+cd /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web
+
+#ftp -inv $HOST <<EOF
+#user $USER $PASSWD
+#mput *
+#ls -la
+#bye
+#EOF
+
+sudo chmod 777 /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web/ -R
+
+sshpass -p 'J5Yw3aUBX40v7RHX' scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=yes -r /home/jenkins/BUILD/myhuddledevapitest.essentialdemo.com/build-web* oesadmin@66.70.170.125:C:\\inetpub\\wwwroot\\myhuddledevapittest.essentialdemo.com
+
+sshpass -p 'J5Yw3aUBX40v7RHX' ssh oesadmin@66.70.170.125 C:\\Windows\\SysWOW64\\inetsrv\\appcmd.exe start apppool /apppool.name:"myhuddledevapitest.essentialdemo.com"
+echo "apppool started"
+
+sshpass -p 'J5Yw3aUBX40v7RHX' ssh oesadmin@66.70.170.125 C:\\Windows\\SysWOW64\\inetsrv\\appcmd.exe start site /site.name:"myhuddledevapitest.essentialdemo.com"
+echo "site started"
